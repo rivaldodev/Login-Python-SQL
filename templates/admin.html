@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administração</title>
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h2 class="mt-4">Administração</h2>
+
+        <!-- Formulário para adicionar usuário -->
+
+        <h4 class="mt-4">Adicionar Usuário</h4>
+        <form method="POST" class="mb-4">
+            <input type="hidden" name="action" value="add">
+            <div class="mb-3">
+                <label for="username" class="form-label">Usuário</label>
+                <input type="text" class="form-control" name="username" required>
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" name="email" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Senha</label>
+                <input type="password" class="form-control" name="password" required>
+            </div>
+            <button type="submit" class="btn btn-success">Adicionar Usuário</button>
+        </form>
+
+        <!-- Tabela de usuários -->
+        <table class="table table-striped mt-4">
+            <thead>
+                <tr>
+                    <th>Usuário</th>
+                    <th>Email</th>
+                    <th>Saldo</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <ul>
+                        {% for category, message in messages %}
+                            {% if category =='success' or category == 'danger' or category == 'info' %}
+                                <li class="alert alert-{{ category }}">{{ message }}</li>
+                            {% endif %}
+                        {% endfor %}
+                        </ul>
+                    {% endif %}
+                {% endwith %}
+                {% for usuario in usuarios %}
+                <tr>
+                    <td>{{ usuario[0] }}</td>
+                    <td>{{ usuario[1] }}</td>
+                    <td>{{ usuario[2] }}</td>
+                    <td>
+                        <form method="POST" style="display: inline-block;">
+                            <input type="hidden" name="action" value="update">
+                            <input type="hidden" name="username" value="{{ usuario[0] }}">
+                            <input type="number" name="saldo" value="{{ usuario[2] }}" step="0.01" required>
+                            <button type="submit" class="btn btn-primary btn-sm">Atualizar</button>
+                        </form>
+                        <form method="POST" style="display: inline-block;">
+                            <input type="hidden" name="action" value="delete">
+                            <input type="hidden" name="username" value="{{ usuario[0] }}">
+                            <button type="submit" class="btn btn-danger btn-sm">Remover</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <a href="{{ url_for('gerador') }}" class="btn btn-secondary mt-4">Voltar</a>
+    </div>
+</body>
+</html>
